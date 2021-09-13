@@ -26,10 +26,11 @@ print("Sim version = ", sim.version)
 
 
 
-# *** Load the map ***
+# ---- Load the map ----
 
-# Tartu v3 map UUID: e340b6cd-fc15-4293-871b-4cf9cb4410a5
-scene_name = env.str("LGSVL__MAP", "e340b6cd-fc15-4293-871b-4cf9cb4410a5")
+# Tartu v3 map UUID:    e340b6cd-fc15-4293-871b-4cf9cb4410a5
+# Tartu v4:             bd77ac3b-fbc3-41c3-a806-25915c777022
+scene_name = env.str("LGSVL__MAP", "bd77ac3b-fbc3-41c3-a806-25915c777022")
 if sim.current_scene == scene_name:
     sim.reset()
 else:
@@ -37,7 +38,7 @@ else:
     
     
 
-# *** Spawn EGO ***
+# ---- Spawn EGO ----
 
 spawns = sim.get_spawn()
 egoState = lgsvl.AgentState()
@@ -50,52 +51,59 @@ right = lgsvl.utils.transform_to_right(spawns[0])
 egoState.transform = sim.map_point_on_lane(lgsvl.Vector(-578.168518066406, 35.7000007629395, 73.3115463256836)) # Before the roundabout
 print("EGO location set")
 
-# Create vehicle
+# Create ego vehicle
+# Default SVL Lexus, UT conf:   289c5010-fd86-4134-8d65-8439a5d3fd40
+# New UT Bolt Lexus:            9c98739c-05cf-4325-99a5-644b800161ba
 ego = sim.add_agent(name = "289c5010-fd86-4134-8d65-8439a5d3fd40", agent_type = lgsvl.AgentType.EGO, state = egoState)
 print("EGO vehicle added")
 
 
 
-# *** Spawn NPC-s ***
+# ---- Spawn NPC-s ----
 
 npcState = lgsvl.AgentState()
 
 # Location NPC 
 npcState.transform = sim.map_point_on_lane(lgsvl.Vector(-569.962829589844, 35.7000045776367, 93.7434005737305)) # Roundabout
+
 # Create agent
 npc_hatchback = sim.add_agent("Hatchback", lgsvl.AgentType.NPC, npcState)
 print("NPC hatchpack added")
+
 # Move agent
+
+# Vehicle will follow the lane with max speed and isLaneChange=True/False
 npc_hatchback.follow_closest_lane(True, 5.6, False)
-print("NPC hatchback moving")
 
-## Location NPC
-#npcState.transform = sim.map_point_on_lane(lgsvl.Vector(-535.827392578125, 35.2202301025391, 107.277183532715)) # After the roundabout
-## Create player
-#npc_truck = sim.add_agent("BoxTruck", lgsvl.AgentType.NPC, npcState)
-#print("NPC car added")
 
-# Location NPC
-npcState.transform = sim.map_point_on_lane(lgsvl.Vector(-438.066497802734, 34.4155693054199, 97.8415832519531)) # After Delta pocket
-# Create player
+# Add 2nd NPC vehicle
+
+npcState.transform = sim.map_point_on_lane(lgsvl.Vector(-535.827392578125, 35.2202301025391, 107.277183532715)) # After the roundabout
 npc_truck = sim.add_agent("BoxTruck", lgsvl.AgentType.NPC, npcState)
 print("NPC car added")
 
-# Location NPC
+# Vehicle will follow the lane with max speed and isLaneChange=True/False
+npc_truck.follow_closest_lane(True, 5.6, False)
+
+
+# Add 3rd NPC - pedestrian
+
 npcState.transform.position = lgsvl.Vector(-555.035461425781, 35.6290016174316, 104.12264251709) # After the roundabout
-# Create player
 npc_pedestrian = sim.add_agent("Bob", lgsvl.AgentType.PEDESTRIAN, npcState)
 npc_pedestrian.walk_randomly(True)
 print("NPC pedestrian added")
 
-# Location NPC
+
+# Add 4th NPC - pedestrian
+
 npcState.transform.position = lgsvl.Vector(-558.037292480469, 35.7999992370605, 110.737693786621) # After the roundabout
-# Create player
 npc_pedestrian = sim.add_agent("Bob", lgsvl.AgentType.PEDESTRIAN, npcState)
 npc_pedestrian.walk_randomly(True)
 print("NPC pedestrian added")
 
 
+
+# ---- Connect bridge ----
 
 # Connect the EGO to a bridge at the specified IP and port
 ego.connect_bridge(LGSVL__AUTOPILOT_0_HOST, LGSVL__AUTOPILOT_0_PORT) 
@@ -106,15 +114,15 @@ print("Bridge connected:", ego.bridge_connected)
 
 
 
-# *** Apollo Dreamview setup ***
+# ---- Apollo Dreamview setup ----
 
 print("Starting DV setup.. ")
 dv = lgsvl.dreamview.Connection(sim, ego, LGSVL__AUTOPILOT_0_HOST)
-dv.set_hd_map(env.str("LGSVL__AUTOPILOT_HD_MAP", 'tartu_3.0'))
+dv.set_hd_map(env.str("LGSVL__AUTOPILOT_HD_MAP", 'tartu_4.0'))
 dv.set_vehicle(env.str("LGSVL__AUTOPILOT_0_VEHICLE_CONFIG", 'UT Lexus LGSVL'))
 
 
-# Make sure all modules are initially off
+# Ensure all modules initially OFF
 dv.disable_apollo()
 
 # Enable needed modules
@@ -128,18 +136,17 @@ modules = [
         ]
 
 
-# Set EGO destination
 print("Setting destination..")
+
+# Set EGO destination
 destination = sim.map_point_on_lane(lgsvl.Vector(-462.392547607422, 35.0585632324219, 97.4237060546875)) # Delta pocket
-
 print("Point on lane found")
-
 dv.setup_apollo(destination.position.x, destination.position.z, modules)
 print("Destination set")
 
 
-# *** Run the sim ***
+# ---- Run sim ----
 
 print("Running the sim..")
 sim.run()
-print("Done. Test scenario run finished.")
+print("Done.")

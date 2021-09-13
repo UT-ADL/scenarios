@@ -17,17 +17,20 @@ LGSVL__SIMULATOR_PORT = env.int("LGSVL__SIMULATOR_PORT", 8181)
 LGSVL__AUTOPILOT_0_HOST = env.str("LGSVL__AUTOPILOT_0_HOST", "127.0.0.1")
 LGSVL__AUTOPILOT_0_PORT = env.int("LGSVL__AUTOPILOT_0_PORT", 9090)
 
-print("Running Test Scenario 4: ", end=' ')
+print("Running Test Scenario #04: ", end=' ')
 
+# To connect to the sim create an instance of the Simulator class
 sim = lgsvl.Simulator(LGSVL__SIMULATOR_HOST, LGSVL__SIMULATOR_PORT)
 
 print("Sim version = ", sim.version)
 
 
-# *** Load the map ***
 
-# Tartu v3 map UUID: e340b6cd-fc15-4293-871b-4cf9cb4410a5
-scene_name = env.str("LGSVL__MAP", "e340b6cd-fc15-4293-871b-4cf9cb4410a5")
+# ---- Load the map ----
+
+# Tartu v3 map UUID:    e340b6cd-fc15-4293-871b-4cf9cb4410a5
+# Tartu v4:             bd77ac3b-fbc3-41c3-a806-25915c777022
+scene_name = env.str("LGSVL__MAP", "bd77ac3b-fbc3-41c3-a806-25915c777022")
 if sim.current_scene == scene_name:
     sim.reset()
 else:
@@ -35,7 +38,8 @@ else:
     
     
 
-# *** Spawn EGO ***
+# ---- Spawn EGO ----
+
 spawns = sim.get_spawn()
 egoState = lgsvl.AgentState()
 
@@ -48,39 +52,53 @@ egoState.transform = sim.map_point_on_lane(lgsvl.Vector(-45.6839637756348, 34.69
 print("EGO location set")
 
 # Create EGO vehicle
+# Default SVL Lexus, UT conf:   289c5010-fd86-4134-8d65-8439a5d3fd40
+# New UT Bolt Lexus:            9c98739c-05cf-4325-99a5-644b800161ba
 ego = sim.add_agent(name = "289c5010-fd86-4134-8d65-8439a5d3fd40", agent_type = lgsvl.AgentType.EGO, state = egoState)
+print("EGO vehicle added")
 
 
 
-# *** Spawn NPC-s ***
+# ---- Spawn NPC-s ----
+
 npcState = lgsvl.AgentState()
 
-# Location NPC vehicle
-#npcState.transform = sim.map_point_on_lane(lgsvl.Vector(-0.450218200683594, 34.7490425109863, 253.205596923828)) # In a bus stop after Raatuse traffic light >> goes to 1st lane in the running sim, not in the bus stop...
-
-## Test if this is better for placing the bus in the actual bus stop 
-npcState.transform.position = lgsvl.Vector(-0.450218200683594, 34.7490425109863, 253.205596923828)
+# Location NPC
+npcState.transform.position = lgsvl.Vector(-0.450218200683594, 34.7490425109863, 253.205596923828) # In Raatuse bus stop
 npcState.transform.rotation.y = 50
 
-# Create NPC vehicle
-npc_sedan = sim.add_agent("SchoolBus", lgsvl.AgentType.NPC, npcState)
+# Create agent
+npc_bus = sim.add_agent("SchoolBus", lgsvl.AgentType.NPC, npcState)
 print("NPC schoolbus added")
 
+# Move agent
 
-# Location NPC pedestrian
-#npcState.transform = sim.map_point_on_lane(lgsvl.Vector(67.3545532226563, 36, 302.627014160156)) # On a crosswalk after Raatuse traffic light
-npcState.transform.position = lgsvl.Vector(67.3545532226563, 36, 302.627014160156)
+# Vehicle will follow the lane with max speed and isLaneChange=True/False
+npc_bus.follow_closest_lane(True, 4.0, False)
 
-# Create NPC pedestrian
+
+# Add pedestrian
+
+npcState.transform.position = lgsvl.Vector(67.3545532226563, 36, 302.627014160156) # On the crosswalk
+
 bob = sim.add_agent("Bob", lgsvl.AgentType.PEDESTRIAN, npcState)
 print("NPC Bob added")
 
+# Move pedestrian using waypoints (position, idle, trigger_distance=0, speed=1, trigger=None)
+waypoints = [
+  lgsvl.WalkWaypoint(lgsvl.Vector(68.662, 36.097, 298.176), 0, 0, 2, None),
+  lgsvl.WalkWaypoint(lgsvl.Vector(68.695, 36.000, 301.075), 0, 0, 2, None),
+  lgsvl.WalkWaypoint(lgsvl.Vector(66.649, 35.997, 301.745), 0, 0, 2, None),
+  lgsvl.WalkWaypoint(lgsvl.Vector(68.188, 36.000, 302.914), 0, 0, 2, None),
+  lgsvl.WalkWaypoint(lgsvl.Vector(66.366, 35.998, 303.374), 0, 0, 2, None),
+  lgsvl.WalkWaypoint(lgsvl.Vector(63.864, 35.996, 307.898), 0, 0, 2, None),
+  lgsvl.WalkWaypoint(lgsvl.Vector(69.826, 36.099, 298.005), 0, 0, 2, None)
+]
+bob.follow(waypoints, loop=True)
 
-# Move NPC
-# .. TODO ..
-#
-#
 
+
+# ---- Connect bridge ----
 
 # Connect the EGO to a bridge at the specified IP and port
 ego.connect_bridge(LGSVL__AUTOPILOT_0_HOST, LGSVL__AUTOPILOT_0_PORT) 
@@ -91,14 +109,15 @@ print("Bridge connected:", ego.bridge_connected)
 
 
 
-# *** Apollo Dreamview setup ***
+# ---- Apollo Dreamview setup ----
+
 print("Starting DV setup.. ")
 dv = lgsvl.dreamview.Connection(sim, ego, LGSVL__AUTOPILOT_0_HOST)
-dv.set_hd_map(env.str("LGSVL__AUTOPILOT_HD_MAP", 'tartu_3.0'))
+dv.set_hd_map(env.str("LGSVL__AUTOPILOT_HD_MAP", 'tartu_4.0'))
 dv.set_vehicle(env.str("LGSVL__AUTOPILOT_0_VEHICLE_CONFIG", 'UT Lexus LGSVL'))
 
 
-# Make sure all modules are initially off
+# Ensure all modules initially OFF
 dv.disable_apollo()
 
 # Enable needed modules
@@ -112,16 +131,17 @@ modules = [
         ]
 
 
-# Set EGO destination
 print("Setting destination..")
+
+# Set EGO destination
 destination = sim.map_point_on_lane(lgsvl.Vector(89.4868850708008, 36, 315.898773193359)) # Slightly after the crosswalk
 print("Point on lane found")
-
 dv.setup_apollo(destination.position.x, destination.position.z, modules)
 print("Destination set")
 
 
-# Run the sim
+# ---- Run sim ----
+
 print("Running the sim..")
 sim.run()
-print("Done. Test scenario run finished.")
+print("Done.")
