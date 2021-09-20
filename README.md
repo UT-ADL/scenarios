@@ -21,8 +21,7 @@
 - After the scenario is finished, stop the API-only simulation in SVL web UI.
 - To view the results check the API-only simulation Test Results in the web UI.
 
-
-- To run a next scenario, start the API only sim and run the next Python script.
+To run a next scenario, start the API only sim and run the next Python script.
 
 
 # Example run of the 1st scenario:
