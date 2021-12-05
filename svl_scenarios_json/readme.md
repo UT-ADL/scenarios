@@ -5,8 +5,8 @@
 - Install and run [Apollo] (https://github.com/ApolloAuto/apollo).
 - Download and run [SVL Simulator] (https://github.com/lgsvl/simulator).
 - Place the correct map and vehicle files in the according Apollo directories like guided in Apollo documentation.
-    - Map source in SVL sim store [Tartu Beta Release 3](https://wise.svlsimulator.com/maps/profile/bd77ac3b-fbc3-41c3-a806-25915c777022):
-    - Vehicle source in SVL sim store [UT Lexus](https://wise.svlsimulator.com/vehicles/profile/55e7bb62-185e-400f-b092-cfd2ef18936d): 
+    - Map source in SVL sim store [Tartu Beta Release 3](https://wise.svlsimulator.com/maps/profile/bd77ac3b-fbc3-41c3-a806-25915c777022).
+    - Vehicle source in SVL sim store [UT Lexus](https://wise.svlsimulator.com/vehicles/profile/55e7bb62-185e-400f-b092-cfd2ef18936d).
 
 ## Simulation
 
