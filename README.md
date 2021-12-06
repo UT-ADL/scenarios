@@ -37,5 +37,5 @@ SVL sim v2021.3 + Apollo 6 (Modular)
 1. Sometimes NPC-s are not in exactly the same places when running the sim multiple times in a row. Depending on how much time it takes for the Apollo to start, NPC-s may have moved less or more. It is better with waypoint behavior but not perfect.
 1. Sometimes the ego vehicle drives into the NPC vehicle and the other way around (the two meshes visually overlap in the sim). Happens even when the NPC is detected and the ego vehicle reduces speed because of it. The collision event is still expected to be registered and visible under the SVL web UI Test Results.
 1. Sometimes NPC vehicles perform maneuvers chunkily. Can be smoothed out by placing the NPC waypoints very close together to create a smoother turning curve or use already smoother turning curve. But it is still not perfect.
-1. Pedestrians with waypoints don't work as expected currently. Waiting for the fix by SVL. Not using pedestrians waypoint movement until then.
+1. Pedestrians with waypoints don't work as expected currently. Waiting for the [fix by SVL](https://github.com/lgsvl/simulator/issues/1797). Not using pedestrians waypoint movement until then.
 1. The blinker is not visible in the sim.
