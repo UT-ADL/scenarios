@@ -28,8 +28,7 @@ print("Sim version = ", sim.version)
 
 # ---- Load the map ----
 
-# Tartu v3 map UUID:    e340b6cd-fc15-4293-871b-4cf9cb4410a5
-# Tartu v4:             bd77ac3b-fbc3-41c3-a806-25915c777022
+# Tartu Beta Release 3:             bd77ac3b-fbc3-41c3-a806-25915c777022
 scene_name = env.str("LGSVL__MAP", "bd77ac3b-fbc3-41c3-a806-25915c777022")
 if sim.current_scene == scene_name:
     sim.reset()
@@ -52,9 +51,8 @@ egoState.transform = sim.map_point_on_lane(lgsvl.Vector(-412.969665527344, 35.54
 print("EGO location set")
 
 # Create ego vehicle
-# Default SVL Lexus, UT conf:   289c5010-fd86-4134-8d65-8439a5d3fd40
-# New UT Bolt Lexus:            9c98739c-05cf-4325-99a5-644b800161ba
-ego = sim.add_agent(name = "289c5010-fd86-4134-8d65-8439a5d3fd40", agent_type = lgsvl.AgentType.EGO, state = egoState)
+# White UT Bolt Lexus (Modular): 9c98739c-05cf-4325-99a5-644b800161ba
+ego = sim.add_agent(name = "9c98739c-05cf-4325-99a5-644b800161ba", agent_type = lgsvl.AgentType.EGO, state = egoState)
 print("EGO vehicle added")
 
 
@@ -100,8 +98,8 @@ print("Bridge connected:", ego.bridge_connected)
 
 print("Starting DV setup.. ")
 dv = lgsvl.dreamview.Connection(sim, ego, LGSVL__AUTOPILOT_0_HOST)
-dv.set_hd_map(env.str("LGSVL__AUTOPILOT_HD_MAP", 'tartu_4.0'))
-dv.set_vehicle(env.str("LGSVL__AUTOPILOT_0_VEHICLE_CONFIG", 'UT Lexus LGSVL'))
+dv.set_hd_map(env.str("LGSVL__AUTOPILOT_HD_MAP", 'Tartu Beta Release 3'))
+dv.set_vehicle(env.str("LGSVL__AUTOPILOT_0_VEHICLE_CONFIG", 'UT Lexus'))
 
 
 # Ensure all modules initially OFF
