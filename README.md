@@ -32,10 +32,12 @@ Overview what is covered in the **full lap** test scenarios:
 
 #### Known Issues
 
-SVL sim v2021.3 + Apollo 6 (Modular)
+SVL sim v2021.3 + Apollo 6 
 
+1. NPC behaviour is [buggy](https://github.com/lgsvl/simulator/issues/1797) and is waiting for next release. Currently not suggesting to use at least the pedestrians.
 1. Sometimes NPC-s are not in exactly the same places when running the sim multiple times in a row. Depending on how much time it takes for the Apollo to start, NPC-s may have moved less or more. It is better with waypoint behavior but not perfect.
 1. Sometimes the ego vehicle drives into the NPC vehicle and the other way around (the two meshes visually overlap in the sim). Happens even when the NPC is detected and the ego vehicle reduces speed because of it. The collision event is still expected to be registered and visible under the SVL web UI Test Results.
 1. Sometimes NPC vehicles perform maneuvers chunkily. Can be smoothed out by placing the NPC waypoints very close together to create a smoother turning curve or use already smoother turning curve. But it is still not perfect.
-1. Pedestrians with waypoints don't work as expected currently. Waiting for the [fix by SVL](https://github.com/lgsvl/simulator/issues/1797). Not using pedestrians waypoint movement until then.
 1. The blinker is not visible in the sim.
+1. Traffic lights not working in Apollo, use Apollo Modular Testing instead.
+1. The sim behaviour is not fully deterministic. If something does not work, restart the sim or Apollo or both and retry.
