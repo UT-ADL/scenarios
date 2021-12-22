@@ -28,8 +28,7 @@ print("Sim version = ", sim.version)
 
 # ---- Load the map ----
 
-# Tartu v3 map UUID:    e340b6cd-fc15-4293-871b-4cf9cb4410a5
-# Tartu v4:             bd77ac3b-fbc3-41c3-a806-25915c777022
+# Tartu Beta Release 3:             bd77ac3b-fbc3-41c3-a806-25915c777022
 scene_name = env.str("LGSVL__MAP", "bd77ac3b-fbc3-41c3-a806-25915c777022")
 if sim.current_scene == scene_name:
     sim.reset()
@@ -52,9 +51,11 @@ egoState.transform = sim.map_point_on_lane(lgsvl.Vector(-330.781524658203, 34.99
 print("EGO location set")
 
 # Create ego vehicle
-# Default SVL Lexus, UT conf:   289c5010-fd86-4134-8d65-8439a5d3fd40
-# New UT Bolt Lexus:            9c98739c-05cf-4325-99a5-644b800161ba
-ego = sim.add_agent(name = "289c5010-fd86-4134-8d65-8439a5d3fd40", agent_type = lgsvl.AgentType.EGO, state = egoState)
+# UT Bolt Lexus : 80a96c6b-18b6-494f-a469-e67659ca0ea0
+# UT Bolt Lexus (Modular): 9c98739c-05cf-4325-99a5-644b800161ba
+# UT Bolt Lexus (Modular TFL): f6fbbc88-87c0-4a83-b858-e2a49e98b4a9
+# SVL default Lincoln: 2e9095fa-c9b9-4f3f-8d7d-65fa2bb03921
+ego = sim.add_agent(name = "9c98739c-05cf-4325-99a5-644b800161ba", agent_type = lgsvl.AgentType.EGO, state = egoState)
 print("EGO vehicle added")
 
 
@@ -88,13 +89,28 @@ print("NPC car added")
 
 # Add 3rd NPC vehicle
 
-npcState.transform = sim.map_point_on_lane(lgsvl.Vector(-585.701110839844, 35.7000045776367, 81.6404571533203)) # On the roundabout
+npcState.transform = sim.map_point_on_lane(lgsvl.Vector(-570.116455078125, 35.1528854370117, 93.4908218383789)) # On the roundabout
 
 npc_sedan = sim.add_agent("Sedan", lgsvl.AgentType.NPC, npcState)
 print("NPC car added")
 
 # Vehicle will follow the lane with max speed and isLaneChange=True/False
-npc_sedan.follow_closest_lane(True, 2.0, False)
+#npc_sedan.follow_closest_lane(True, 2.0, False)
+
+# Vehicle will follow the waypoints with: 
+# coordinates, speed, acceleration, rotation, opt wait time, active on idling, opt trigger distance.
+waypoints_sedan = [
+    lgsvl.DriveWaypoint(lgsvl.Vector(-566.656,35.139,98.900), 6, 0, lgsvl.Vector(0.122, 32.601, 0), 0, False, 15),
+    lgsvl.DriveWaypoint(lgsvl.Vector(-564.899,35.152,101.007), 5, 0, lgsvl.Vector(359.719, 39.823, -1.334), 0, False, 0),
+    lgsvl.DriveWaypoint(lgsvl.Vector(-563.175,35.166,102.788), 5, 0, lgsvl.Vector(359.668, 44.070, 0), 0, False, 0),
+    lgsvl.DriveWaypoint(lgsvl.Vector(-560.938,35.190,104.745), 5, 0, lgsvl.Vector(359.544, 48.810, 0), 0, False, 0),
+    lgsvl.DriveWaypoint(lgsvl.Vector(-558.889,35.181,106.322), 5, 0, lgsvl.Vector(0.204, 52.423, -6.670), 0, False, 0),
+    lgsvl.DriveWaypoint(lgsvl.Vector(-553.712,35.139,108.911), 5, 0, lgsvl.Vector(0.410, 63.435, -1.334), 0, False, 0),
+    lgsvl.DriveWaypoint(lgsvl.Vector(-547.096,35.054,110.779), 5, 0, lgsvl.Vector(0.713, 74.227, -2.668), 0, False, 0),
+    lgsvl.DriveWaypoint(lgsvl.Vector(-541.026,34.970,111.171), 5, 0, lgsvl.Vector(0.784, 86.309, 0), 0, False, 0),
+    lgsvl.DriveWaypoint(lgsvl.Vector(-526.143,34.808,109.943), 5, 0, lgsvl.Vector(0.621, 94.716, 0), 0, False, 0)
+]
+npc_sedan.follow(waypoints_sedan, loop=False)
 
 
 ## Add 4th NPC - pedestrian
@@ -137,8 +153,9 @@ print("Bridge connected:", ego.bridge_connected)
 
 print("Starting DV setup.. ")
 dv = lgsvl.dreamview.Connection(sim, ego, LGSVL__AUTOPILOT_0_HOST)
-dv.set_hd_map(env.str("LGSVL__AUTOPILOT_HD_MAP", 'tartu_4.0'))
-dv.set_vehicle(env.str("LGSVL__AUTOPILOT_0_VEHICLE_CONFIG", 'UT Lexus LGSVL'))
+dv.set_hd_map(env.str("LGSVL__AUTOPILOT_HD_MAP", 'Tartu Beta Release 3'))
+dv.set_vehicle(env.str("LGSVL__AUTOPILOT_0_VEHICLE_CONFIG", 'UT Lexus'))
+#dv.set_vehicle(env.str("LGSVL__AUTOPILOT_0_VEHICLE_CONFIG", 'Lincoln2017MKZ_LGSVL'))
 
 
 # Ensure all modules initially OFF

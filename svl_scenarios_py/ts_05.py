@@ -25,17 +25,17 @@ sim = lgsvl.Simulator(LGSVL__SIMULATOR_HOST, LGSVL__SIMULATOR_PORT)
 print("Sim version = ", sim.version)
 
 
+
 # ---- Load the map ----
 
-# Tartu v3 map UUID:    e340b6cd-fc15-4293-871b-4cf9cb4410a5
-# Tartu v4:             bd77ac3b-fbc3-41c3-a806-25915c777022
+# Tartu Beta Release 3:             bd77ac3b-fbc3-41c3-a806-25915c777022
 scene_name = env.str("LGSVL__MAP", "bd77ac3b-fbc3-41c3-a806-25915c777022")
 if sim.current_scene == scene_name:
     sim.reset()
 else:
     sim.load(scene_name, seed = 650387)
-    
-    
+
+
 
 # ---- Spawn EGO ----
 
@@ -47,13 +47,15 @@ forward = lgsvl.utils.transform_to_forward(spawns[0])
 right = lgsvl.utils.transform_to_right(spawns[0])
 
 # Spawn location:
-egoState.transform = sim.map_point_on_lane(lgsvl.Vector(71.8815994262695, 36, 304.734069824219)) # Slightly after Spark crosswalk 
+egoState.transform = sim.map_point_on_lane(lgsvl.Vector(93.2636108398438, 34.6303749084473, 318.452087402344)) # Slightly after Spark crosswalk 
 print("EGO location set")
 
 # Create EGO vehicle
-# Default SVL Lexus, UT conf:   289c5010-fd86-4134-8d65-8439a5d3fd40
-# New UT Bolt Lexus:            9c98739c-05cf-4325-99a5-644b800161ba
-ego = sim.add_agent(name = "289c5010-fd86-4134-8d65-8439a5d3fd40", agent_type = lgsvl.AgentType.EGO, state = egoState)
+# UT Bolt Lexus : 80a96c6b-18b6-494f-a469-e67659ca0ea0
+# UT Bolt Lexus (Modular): 9c98739c-05cf-4325-99a5-644b800161ba
+# UT Bolt Lexus (Modular TFL): f6fbbc88-87c0-4a83-b858-e2a49e98b4a9
+# SVL default Lincoln: 2e9095fa-c9b9-4f3f-8d7d-65fa2bb03921
+ego = sim.add_agent(name = "9c98739c-05cf-4325-99a5-644b800161ba", agent_type = lgsvl.AgentType.EGO, state = egoState)
 print("EGO vehicle added")
 
 
@@ -96,6 +98,23 @@ print("NPC schoolbus added")
 # No movement for 3rd NPC.
 
 
+# Controllables
+
+# Set traffic light I at Kaubamaja crossing to red:
+#controllables = sim.get_controllables()
+#print(controllables)
+#signal = controllables[?] # >> Currently no info how to find the exact one. Waiting for SVL answer.
+#print("Type:", signal.type)
+#print("Transform:", signal.transform)
+#print("Current state:", signal.current_state)
+#print("Valid actions:", signal.valid_actions)
+#print("Default control policy:", signal.default_control_policy)
+#print("Current control policy:", signal.control_policy)
+##control_policy = "trigger=20;red=30;"
+#signal.control("trigger=10;red=60")
+#print("Current control policy:", signal.control_policy)
+
+
 
 # ---- Connect bridge ----
 
@@ -112,9 +131,9 @@ print("Bridge connected:", ego.bridge_connected)
 
 print("Starting DV setup.. ")
 dv = lgsvl.dreamview.Connection(sim, ego, LGSVL__AUTOPILOT_0_HOST)
-dv.set_hd_map(env.str("LGSVL__AUTOPILOT_HD_MAP", 'tartu_4.0'))
-dv.set_vehicle(env.str("LGSVL__AUTOPILOT_0_VEHICLE_CONFIG", 'UT Lexus LGSVL'))
-
+dv.set_hd_map(env.str("LGSVL__AUTOPILOT_HD_MAP", 'Tartu Beta Release 3'))
+dv.set_vehicle(env.str("LGSVL__AUTOPILOT_0_VEHICLE_CONFIG", 'UT Lexus'))
+#dv.set_vehicle(env.str("LGSVL__AUTOPILOT_0_VEHICLE_CONFIG", 'Lincoln2017MKZ_LGSVL'))
 
 
 # Ensure all modules initially OFF

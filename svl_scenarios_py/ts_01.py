@@ -51,7 +51,10 @@ egoState.transform = sim.map_point_on_lane(lgsvl.Vector(-412.969665527344, 35.54
 print("EGO location set")
 
 # Create ego vehicle
-# White UT Bolt Lexus (Modular): 9c98739c-05cf-4325-99a5-644b800161ba
+# UT Bolt Lexus : 80a96c6b-18b6-494f-a469-e67659ca0ea0
+# UT Bolt Lexus (Modular): 9c98739c-05cf-4325-99a5-644b800161ba
+# UT Bolt Lexus (Modular TFL): f6fbbc88-87c0-4a83-b858-e2a49e98b4a9
+# SVL default Lincoln: 2e9095fa-c9b9-4f3f-8d7d-65fa2bb03921
 ego = sim.add_agent(name = "9c98739c-05cf-4325-99a5-644b800161ba", agent_type = lgsvl.AgentType.EGO, state = egoState)
 print("EGO vehicle added")
 
@@ -75,6 +78,8 @@ print("NPC Bob added")
 bob.walk_randomly(True)
 
 # Move pedestrian using waypoints (position, idle, trigger_distance=0, speed=1, trigger=None)
+### --Not working in SVL sim v2021.3. Waiting for the fix.
+
 #waypoints = [
   #lgsvl.WalkWaypoint(lgsvl.Vector(-412.7, 35.4, 76.499), 20, 0)
   ##lgsvl.WalkWaypoint(egoState.transform.position + (2 * -right), 30, 0)
@@ -100,6 +105,7 @@ print("Starting DV setup.. ")
 dv = lgsvl.dreamview.Connection(sim, ego, LGSVL__AUTOPILOT_0_HOST)
 dv.set_hd_map(env.str("LGSVL__AUTOPILOT_HD_MAP", 'Tartu Beta Release 3'))
 dv.set_vehicle(env.str("LGSVL__AUTOPILOT_0_VEHICLE_CONFIG", 'UT Lexus'))
+#dv.set_vehicle(env.str("LGSVL__AUTOPILOT_0_VEHICLE_CONFIG", 'Lincoln2017MKZ_LGSVL'))
 
 
 # Ensure all modules initially OFF

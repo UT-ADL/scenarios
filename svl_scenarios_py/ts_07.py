@@ -28,8 +28,7 @@ print("Sim version = ", sim.version)
 
 # ---- Load the map ----
 
-# Tartu v3 map UUID:    e340b6cd-fc15-4293-871b-4cf9cb4410a5
-# Tartu v4:             bd77ac3b-fbc3-41c3-a806-25915c777022
+# Tartu Beta Release 3:             bd77ac3b-fbc3-41c3-a806-25915c777022
 scene_name = env.str("LGSVL__MAP", "bd77ac3b-fbc3-41c3-a806-25915c777022")
 if sim.current_scene == scene_name:
     sim.reset()
@@ -52,9 +51,11 @@ egoState.transform = sim.map_point_on_lane(lgsvl.Vector(223.959732055664, 35.859
 print("EGO location set")
 
 # Create ego vehicle
-# Default SVL Lexus, UT conf:   289c5010-fd86-4134-8d65-8439a5d3fd40
-# New UT Bolt Lexus:            9c98739c-05cf-4325-99a5-644b800161ba
-ego = sim.add_agent(name = "289c5010-fd86-4134-8d65-8439a5d3fd40", agent_type = lgsvl.AgentType.EGO, state = egoState)
+# UT Bolt Lexus : 80a96c6b-18b6-494f-a469-e67659ca0ea0
+# UT Bolt Lexus (Modular): 9c98739c-05cf-4325-99a5-644b800161ba
+# UT Bolt Lexus (Modular TFL): f6fbbc88-87c0-4a83-b858-e2a49e98b4a9
+# SVL default Lincoln: 2e9095fa-c9b9-4f3f-8d7d-65fa2bb03921
+ego = sim.add_agent(name = "9c98739c-05cf-4325-99a5-644b800161ba", agent_type = lgsvl.AgentType.EGO, state = egoState)
 print("EGO vehicle added")
 
 
@@ -87,11 +88,13 @@ print("NPC car added")
 
 # Add 3rd NPC - pedestrian
 
+# Pedestrians are buggy in 2021.3. Waiting for SVL fix.
+
 # Location NPC 
 npcState.transform.position = lgsvl.Vector(57.7405548095703, 35.699893951416, 27.1777667999268) # Raekoja, around the crossing
 # Create agent
 npc_pedestrian = sim.add_agent("Bob", lgsvl.AgentType.PEDESTRIAN, npcState)
-npc_pedestrian.walk_randomly(True)
+#npc_pedestrian.walk_randomly(True)
 print("NPC pedestrian added")
 
 
@@ -101,7 +104,7 @@ print("NPC pedestrian added")
 npcState.transform.position = lgsvl.Vector(66.9059295654297, 35.7073020935059, 18.7154960632324) # Raekoja, around the crossing
 # Create agent
 npc_pedestrian = sim.add_agent("EntrepreneurFemale", lgsvl.AgentType.PEDESTRIAN, npcState)
-npc_pedestrian.walk_randomly(True)
+#npc_pedestrian.walk_randomly(True)
 print("NPC pedestrian added")
 
 
@@ -111,7 +114,7 @@ print("NPC pedestrian added")
 npcState.transform.position = lgsvl.Vector(62.7869491577148, 35.7033233642578, 29.7536697387695) # Raekoja, around the crossing
 # Create agent
 npc_pedestrian = sim.add_agent("Howard", lgsvl.AgentType.PEDESTRIAN, npcState)
-npc_pedestrian.walk_randomly(True)
+#npc_pedestrian.walk_randomly(True)
 print("NPC pedestrian added")
 
 
@@ -121,7 +124,7 @@ print("NPC pedestrian added")
 npcState.transform.position = lgsvl.Vector(74.8051147460938, 35.7080001831055, 22.8980484008789) # Raekoja, around the crossing
 # Create agent
 npc_pedestrian = sim.add_agent("Johny", lgsvl.AgentType.PEDESTRIAN, npcState)
-npc_pedestrian.walk_randomly(True)
+#npc_pedestrian.walk_randomly(True)
 print("NPC pedestrian added")
 
 
@@ -131,7 +134,7 @@ print("NPC pedestrian added")
 npcState.transform.position = lgsvl.Vector(72.0412292480469, 35.7300148010254, 35.6478691101074) # Raekoja, around the crossing
 # Create agent
 npc_pedestrian = sim.add_agent("Johny", lgsvl.AgentType.PEDESTRIAN, npcState)
-npc_pedestrian.walk_randomly(True)
+#npc_pedestrian.walk_randomly(True)
 print("NPC pedestrian added")
 
 
@@ -141,7 +144,7 @@ print("NPC pedestrian added")
 npcState.transform.position = lgsvl.Vector(74.7052307128906, 35.7213821411133, 16.9852600097656) # Raekoja, around the crossing
 # Create agent
 npc_pedestrian = sim.add_agent("Pamela", lgsvl.AgentType.PEDESTRIAN, npcState)
-npc_pedestrian.walk_randomly(True)
+#npc_pedestrian.walk_randomly(True)
 print("NPC pedestrian added")
 
 
@@ -151,7 +154,7 @@ print("NPC pedestrian added")
 npcState.transform.position = lgsvl.Vector(56.4283676147461, 35.6898880004883, 30.6000308990479) # Raekoja, around the crossing
 # Create agent
 npc_pedestrian = sim.add_agent("Presley", lgsvl.AgentType.PEDESTRIAN, npcState)
-npc_pedestrian.walk_randomly(True)
+#npc_pedestrian.walk_randomly(True)
 print("NPC pedestrian added")
 
 
@@ -161,7 +164,7 @@ print("NPC pedestrian added")
 npcState.transform.position = lgsvl.Vector(59.8627090454102, 35.7001266479492, 28.835620880127) # Raekoja, around the crossing
 # Create agent
 npc_pedestrian = sim.add_agent("Robin", lgsvl.AgentType.PEDESTRIAN, npcState)
-npc_pedestrian.walk_randomly(True)
+#npc_pedestrian.walk_randomly(True)
 print("NPC pedestrian added")
 
 
@@ -171,7 +174,7 @@ print("NPC pedestrian added")
 npcState.transform.position = lgsvl.Vector(66.2516403198242, 35.5999984741211, 20.4688777923584) # Raekoja, around the crossing
 # Create agent
 npc_pedestrian = sim.add_agent("Stephen", lgsvl.AgentType.PEDESTRIAN, npcState)
-npc_pedestrian.walk_randomly(True)
+#npc_pedestrian.walk_randomly(True)
 print("NPC pedestrian added")
 
 
@@ -191,8 +194,9 @@ print("Bridge connected:", ego.bridge_connected)
 
 print("Starting DV setup.. ")
 dv = lgsvl.dreamview.Connection(sim, ego, LGSVL__AUTOPILOT_0_HOST)
-dv.set_hd_map(env.str("LGSVL__AUTOPILOT_HD_MAP", 'tartu_4.0'))
-dv.set_vehicle(env.str("LGSVL__AUTOPILOT_0_VEHICLE_CONFIG", 'UT Lexus LGSVL'))
+dv.set_hd_map(env.str("LGSVL__AUTOPILOT_HD_MAP", 'Tartu Beta Release 3'))
+dv.set_vehicle(env.str("LGSVL__AUTOPILOT_0_VEHICLE_CONFIG", 'UT Lexus'))
+#dv.set_vehicle(env.str("LGSVL__AUTOPILOT_0_VEHICLE_CONFIG", 'Lincoln2017MKZ_LGSVL'))
 
 
 # Ensure all modules initially OFF

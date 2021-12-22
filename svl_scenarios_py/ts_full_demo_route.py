@@ -13,7 +13,7 @@ LGSVL__SIMULATOR_PORT = env.int("LGSVL__SIMULATOR_PORT", 8181)
 LGSVL__AUTOPILOT_0_HOST = env.str("LGSVL__AUTOPILOT_0_HOST", "127.0.0.1")
 LGSVL__AUTOPILOT_0_PORT = env.int("LGSVL__AUTOPILOT_0_PORT", 9090)
 
-print("Running test scenario #11 - Full lap ", end=' ')
+print("Running test scenario #Full lap ", end=' ')
 
 # To connect to the sim create an instance of the Simulator class
 sim = lgsvl.Simulator(LGSVL__SIMULATOR_HOST, LGSVL__SIMULATOR_PORT)
@@ -65,17 +65,19 @@ npcState = lgsvl.AgentState()
 
 # Add NPC 1 - pedestrian1
 
-# Location NPC  
-npcState.transform.position = lgsvl.Vector(-412.9, 35.5190963745117, 76.4997787475586)
+### NPC bugs in 2021.3 are waiting for SVL fix in the next release.
 
-# Create agent
-bob = sim.add_agent("Bob", lgsvl.AgentType.PEDESTRIAN, npcState)
-print("NPC Bob added")
+## Location NPC  
+#npcState.transform.position = lgsvl.Vector(-412.9, 35.5190963745117, 76.4997787475586)
 
-# Move agent 
+## Create agent
+#bob = sim.add_agent("Bob", lgsvl.AgentType.PEDESTRIAN, npcState)
+#print("NPC Bob added")
 
-# Bob will walk to a random point on sidewalk
-bob.walk_randomly(True)
+## Move agent 
+
+## Bob will walk to a random point on sidewalk
+#bob.walk_randomly(True)
 
 ## Move Bob using waypoints (position, idle, trigger_distance=0, speed=1, trigger=None)
 
@@ -237,14 +239,12 @@ print("Bridge connected:", ego.bridge_connected)
 
 print("Starting DV setup.. ")
 dv = lgsvl.dreamview.Connection(sim, ego, LGSVL__AUTOPILOT_0_HOST)
-#dv.set_hd_map(env.str("LGSVL__AUTOPILOT_HD_MAP", 'tartu_4.0'))
-dv.set_hd_map(env.str("LGSVL__AUTOPILOT_HD_MAP", 'tartu_beta_simver3'))
-#dv.set_vehicle(env.str("LGSVL__AUTOPILOT_0_VEHICLE_CONFIG", 'UT Lexus'))
-dv.set_vehicle(env.str("LGSVL__AUTOPILOT_0_VEHICLE_CONFIG", 'UT Lexus LGSVL'), gps_offset_z=-1.775)
-#dv.set_vehicle(env.str("LGSVL__AUTOPILOT_0_VEHICLE_CONFIG", 'UT Lexus LGSVL'))
+dv.set_hd_map(env.str("LGSVL__AUTOPILOT_HD_MAP", 'Tartu Beta Release 3'))
+dv.set_vehicle(env.str("LGSVL__AUTOPILOT_0_VEHICLE_CONFIG", 'UT Lexus'))
+#dv.set_vehicle(env.str("LGSVL__AUTOPILOT_0_VEHICLE_CONFIG", 'Lincoln2017MKZ_LGSVL'))
 
 
-# ---
+
 # Ensure all modules initially OFF
 dv.disable_apollo()
 
@@ -264,54 +264,49 @@ print("Setting destination..")
 # Set EGO destination
 destination = sim.map_point_on_lane(lgsvl.Vector(-472.491394042969, 34.6208724975586, 98.7638397216797)) # Delta pocket
 print("Point on lane found")
-dv.setup_apollo(destination.position.x, destination.position.z, modules)
-print("Destination set")
-
-#control.handbrake = False
-# ---
-# -->
-# Navid 18.10.2021
-# Instead of dv.setup_apollo(), try this for not starting the sim until apollo is ready:
-
-#print("enable Localization")
-#dv.enable_module('Localization')
-#print("enable Transform")
-#dv.enable_module('Transform')
-#print("enable Routing")
-#dv.enable_module('Routing')
-#print("enable Prediction")
-#dv.enable_module('Prediction')
-#print("enable control")
-#dv.enable_module('Control')
-
-#modules_status = dv.get_module_status()
-#if (modules_status['Planning']):
-    #print("disable Planning")
-    #dv.disable_module('Planning')
-
-#while(not modules_status['Routing']):
-    #print('waiting for Routing module')
-    #time.sleep(1)
-    #modules_status = dv.get_module_status()
-    
-#print("Setting the destination..")
-
-## Set destination
-#destination = sim.map_point_on_lane(lgsvl.Vector(-472.491394042969, 34.6208724975586, 98.7638397216797)) # Delta pocket
-#print("Point on lane found")
-#dv.set_destination(destination.position.x, destination.position.z)
+#dv.setup_apollo(destination.position.x, destination.position.z, modules)
 #print("Destination set")
-#print("Enabling planning..")
-#dv.enable_module('Planning')
+# Instead of dv.setup_apollo(), try this alternative for not starting the sim until Apollo is ready:
 
-#while(not modules_status['Planning']):
-    #print('Waiting for Planning module')
-    #time.sleep(1)
-    #modules_status = dv.get_module_status()
+print("enable Localization")
+dv.enable_module('Localization')
+print("enable Transform")
+dv.enable_module('Transform')
+print("enable Routing")
+dv.enable_module('Routing')
+print("enable Prediction")
+dv.enable_module('Prediction')
+print("enable control")
+dv.enable_module('Control')
+
+modules_status = dv.get_module_status()
+if (modules_status['Planning']):
+    print("disable Planning")
+    dv.disable_module('Planning')
+
+while(not modules_status['Routing']):
+    print('waiting for Routing module')
+    time.sleep(1)
+    modules_status = dv.get_module_status()
     
-#print("wait")
-#time.sleep(5)
-#print("waiting over")
+print("Setting the destination..")
+
+# Set EGO destination
+destination = sim.map_point_on_lane(lgsvl.Vector(-472.491394042969, 34.6208724975586, 98.7638397216797)) # Delta pocket
+print("Point on lane found")
+dv.set_destination(destination.position.x, destination.position.z)
+print("Destination set")
+print("Enabling planning..")
+dv.enable_module('Planning')
+
+while(not modules_status['Planning']):
+    print('Waiting for Planning module')
+    time.sleep(1)
+    modules_status = dv.get_module_status()
+    
+print("wait")
+time.sleep(5)
+print("waiting over")
 
 
 # ---- Run sim ----
